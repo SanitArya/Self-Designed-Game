@@ -1,0 +1,479 @@
+//Creating Variables for game
+var plr;
+
+var desert,river,road;
+
+var gameState = "start";
+
+var temperature = 34;
+
+var stoneGrp,pollutantGrp;
+
+var leftBoundry1,rightBoundry1,leftBoundry2,rightBoundry2,leftBoundry3,rightBoundry3;
+
+
+//Loading Images to the variables
+function preload(){
+
+  playerI = loadImage("SDG/PI/player7.png");
+
+  desertI = loadImage("SDG/desert.jpeg");
+  riverI = loadImage("SDG/river.jpg");
+  roadI = loadImage("SDG/road.jpg");
+
+  stoneI = loadImage("SDG/m1.png");
+  pollutantI = loadImage("SDG/p1.png");
+  smokeI = loadImage("SDG/s1.png")
+
+}
+
+
+
+function setup() {
+
+  //Creating canvas
+  createCanvas(800,800);
+
+  //Creating desert
+  desert = createSprite(400,800);
+  desert.addImage("desertI",desertI);
+  desert.scale = 1.5;
+  desert.visible = false;
+
+  //Creating river
+  river = createSprite(400,800);
+  river.addImage("riverI",riverI);
+  river.scale = 2;
+  river.visible = false;
+
+  //Creating road
+  road = createSprite(400,800);
+  road.addImage("roadI",roadI);
+  road.scale = 1.5;
+  road.visible = false;
+
+
+  //Creating Player 1
+  player1 = createSprite(400, 4045);
+  player1.addImage("playerI",playerI);
+  player1.scale = 1;
+  player1.visible = false;
+
+  //Creating Player 2
+  player2 = createSprite(400, 4045);
+  player2.addImage("playerI",playerI);
+  player2.scale = 1;
+  player2.visible = false;
+
+  //Creating Player 3
+  player3 = createSprite(400, 4045);
+  player3.addImage("playerI",playerI);
+  player3.scale = 1;
+  player3.visible = false;
+
+  //Creating Groups
+  stoneGrp = new Group();
+  pollutantGrp = new Group();
+  smokeGrp = new Group();
+
+ leftBoundry1 = createSprite(110,3700,10,1500);
+ leftBoundry1.visible = false;
+
+ rightBoundry1 = createSprite(690,3700,10,1500);
+ rightBoundry1.visible = false;
+
+
+ leftBoundry2 = createSprite(120,3700,10,1500);
+ leftBoundry2.visible = false;
+
+ rightBoundry2 = createSprite(680,3700,10,1500);
+ rightBoundry2.visible = false;
+
+
+ leftBoundry3 = createSprite(160,3700,10,1500);
+ leftBoundry3.visible = false;
+
+ rightBoundry3 = createSprite(640,3700,10,1500);
+ rightBoundry3.visible = false;
+
+}
+
+
+
+function draw() {
+
+  //Coloring Background
+  background("black");
+
+  //Displaying Sprites
+  drawSprites();
+
+  //Changing Game State
+  if(keyDown("space") && gameState=="start" ){
+
+    gameState = "lvl1";
+  }
+
+  if(keyDown("space") && gameState == "over"){
+
+    gameState = "lvl1";
+    temperature = 34;
+  }
+
+  if(player1.y<-2390 && gameState == "lvl1"){
+
+    gameState = "lvl2";
+    river.velocityY = 15;
+  }
+
+  if(player2.y<3390 && gameState == "lvl2" && river.velocityY == 0){
+
+    gameState = "lvl3";
+  }
+
+  if(player3.y<-2390 && gameState == "lvl3" || temperature>44){
+
+    gameState = "over";
+  }
+
+  if(river.y == 7700){
+
+    river.velocityY = 0;
+  }
+
+  //calling Levels
+  if(gameState == "start"){
+
+    Start();
+  }
+
+  if(gameState == "lvl1"){
+
+    Level1();
+    Movement("lvl1");
+  }
+
+  if(gameState == "lvl2"){
+
+    Level2();
+    Movement("lvl2");
+  }
+
+  if(gameState == "lvl3"){
+
+    Level3();
+    Movement("lvl3");
+  }
+
+  if(gameState == "over"){
+
+    Over();
+  }
+
+  //Calling camera position function 
+  Position();
+
+  console.log(player2.y)
+}
+
+
+
+//Creating Start function of Game
+function Start(){
+
+  fill("red");
+  textSize(50);
+  text("Welcome To Game",170,3500);
+  text("Earth On Fire",220,3700);
+  text("Press SPACE to Start",140,3900);
+}
+
+
+
+//Creating Level 1
+function Level1(){
+
+ desert.visible = true;
+ river.visible = false;
+ road.visible = false;
+
+ player1.visible = true;
+ player2.visible = false;
+ player3.visible = false;
+
+ leftBoundry1.visible = true;
+ leftBoundry2.visible = false;
+ leftBoundry3.visible = false;
+
+ rightBoundry1.visible = true;
+ rightBoundry2.visible = false;
+ rightBoundry3.visible = false;
+
+ plr = player1;
+
+ player1.collide(leftBoundry1);
+ player1.collide(rightBoundry1);
+
+ if(frameCount%10 == 0){
+
+  temperature = temperature+0.15;
+ }
+
+ spawnStone();
+
+}
+
+
+
+//Creating Level 2
+function Level2(){
+
+ river.visible = true;
+ desert.visible = false;
+ road.visible = false;
+
+ player2.visible = true;
+ player1.visible = false;
+ player3.visible = false;
+
+ plr = player2;
+
+ player2.collide(leftBoundry2);
+ player2.collide(rightBoundry2);
+
+ leftBoundry2.visible = true;
+ leftBoundry1.visible = false;
+ leftBoundry3.visible = false;
+
+ rightBoundry2.visible = true;
+ rightBoundry1.visible = false;
+ rightBoundry3.visible = false;
+
+ spawnPollutant();
+
+}
+
+
+
+//Creating Level 3
+function Level3(){
+
+  road.visible = true;
+  desert.visible = false;
+  river.visible = false;
+
+  player3.visible = true;
+  player2.visible = false;
+
+  plr = player3;
+
+  player3.collide(leftBoundry3);
+  player3.collide(rightBoundry3);
+
+  leftBoundry3.visible = true;
+  leftBoundry2.visible = false;
+  leftBoundry3.visible = false;
+
+  rightBoundry3.visible = true;
+  rightBoundry1.visible = false;
+  rightBoundry3.visible = false;
+
+  spawnSmoke();
+}
+
+
+
+//Creating Game Over Function
+function Over(){
+
+  desert.visible = false;
+  river.visible = false;
+  road.visible = false;
+
+ player1.visible = false;
+ player2.visible = false;
+ player3.visible = false;
+
+ stoneGrp.destroyEach();
+ pollutantGrp.destroyEach();
+ smokeGrp.destroyEach();
+
+}
+
+
+
+//Creating camera's position function
+function Position(){
+
+  if(gameState == "start"){
+
+    camera.y = 3700;
+  }
+
+  if(gameState == "lvl1"){
+
+    if(player1.y>3700){
+  
+      camera.y = 3700;
+
+      Temperature(3355);
+
+    }
+    
+    if(player1.y<3700 && player1.y>-2090){
+    camera.y = player1.y;
+
+    Temperature(plr.y-350);
+
+    }
+  
+    if(player1.y<-2090){
+      
+      camera.y = -2090
+
+      Temperature(-2454)
+
+    }
+  }
+
+  if(gameState == "lvl2"){
+
+      camera.y = 3700;
+    
+  }
+
+  if(gameState == "lvl3"){
+    if(player3.y>3700){
+  
+      camera.y = 3700
+    }
+    
+    if(player3.y<3700 && player3.y>-2090){
+    camera.y = player3.y;
+    }
+  
+    if(player3.y<-2090){
+      
+      camera.y = -2090
+    }
+  }
+}
+
+
+
+//Creating Player's movement
+function Movement(level){
+
+  if(keyDown(UP_ARROW) && gameState == level){
+
+    UP(plr);
+    leftBoundry1.y = player1.y;
+    rightBoundry1.y = player1.y;
+  }
+
+  if(keyDown(DOWN_ARROW) && gameState == level){
+
+    DOWN(plr);
+    leftBoundry1.y = player1.y;
+    rightBoundry1.y = player1.y;
+  }
+
+  if(keyDown(LEFT_ARROW) && gameState == level){
+
+    Left(plr);
+    leftBoundry2.y = player2.y;
+    rightBoundry2.y = player2.y;
+  }
+
+  if(keyDown(RIGHT_ARROW) && gameState == level){
+
+    Right(plr);
+    leftBoundry3.y = player3.y;
+    rightBoundry3.y = player3.y;
+  }
+}
+
+
+
+//Creating player's velocities
+function UP(player){
+
+  player.y = player.y - 15;
+}
+
+function DOWN(player){
+
+  player.y = player.y + 15;
+}
+
+function Left(player){
+
+  player.x = player.x - 15;
+}
+
+function Right(player){
+
+  player.x = player.x + 15;
+}
+
+
+
+//Creating Temperature
+function Temperature(t){
+
+ textSize(20);
+ fill("white")
+ text(Math.round(temperature)+" °C",10,t);
+
+}
+
+
+
+function spawnStone(){
+
+  if(frameCount%25 == 0 && (player1.y<3700 && player1.y>-2090)){
+
+    var stone = createSprite(random(180,600),player1.y - 500);
+    stone.addImage("stoneI",stoneI);
+    stone.scale = 2;
+    stoneGrp.add(stone);
+  
+   }
+
+   player1.bounceOff(stoneGrp);
+}
+
+
+
+function spawnPollutant(){
+
+  if(frameCount%60 == 0 && (player1.y<3700 && player2.y>-2090)){
+
+    var pollutant = createSprite(random(180,600),player2.y - 600);
+    pollutant.addImage("pollutantI",pollutantI);
+    pollutant.scale = 1.5;
+    pollutant.velocityY = 5;
+    pollutantGrp.add(pollutant);
+  
+   }
+
+   player2.bounceOff(pollutantGrp);
+
+   stoneGrp.destroyEach();
+}
+
+function spawnSmoke(){
+
+  if(frameCount%30 == 0 && (player1.y<3700 && player3.y>-2090)){
+
+    var smoke = createSprite(random(180,600),player3.y - 500);
+    smoke.addImage("smokeI",smokeI);
+    smoke.scale = 2;
+    smokeGrp.add(smoke);
+  
+   }
+
+   player3.bounceOff(smokeGrp);
+
+   pollutantGrp.destroyEach();
+}
