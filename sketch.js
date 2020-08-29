@@ -23,6 +23,8 @@ var winI,loseI,GWI,WPI,API;
 
 var life = 1;
 
+var GOS,clickS,notificationS;
+
 
 
 
@@ -62,6 +64,14 @@ function preload(){
 
   API = loadImage("SDG/airPollution.png");
 
+  soundFormats("mp3");
+
+  GOS = loadSound("Sound/gameOver.mp3");
+
+  clickS = loadSound("Sound/click.mp3");
+
+  notificationS = loadSound("Sound/notification");
+ 
 }
 
 
@@ -194,6 +204,7 @@ function draw() {
 
     gameState = "lvl1";
     state = 1;
+    clickS.play();
   }
 
   if(player1.y<-2390 && gameState == "lvl1"){
@@ -201,6 +212,8 @@ function draw() {
     gameState = "gw";
     state = 2;
     river.velocityY = 15;
+    notificationS.play();
+
     
   }
 
@@ -208,6 +221,8 @@ function draw() {
 
     gameState = "lvl2";
     GW.visible = false;
+    clickS.play();
+
     
   }
 
@@ -217,36 +232,49 @@ function draw() {
 
     gameState = "wp";
     state = 3;
-  
+    notificationS.play();
+
   }
 
   if(keyDown("space") && gameState=="wp" ){
 
     gameState = "lvl3";
     WP.visible = false;
+    clickS.play();
+
     
   }
 
 
-  if(player3.y<-2390 && gameState == "lvl3" || temperature>44 || health<=0){
+  if(player3.y<-2390 && gameState == "lvl3" || temperature>44 || health<=0 || life == 0){
 
     gameState = "over";
+    //GOS.play();
+    
   }
 
   if(keyDown("space") && (gameState == "over") && (temperature>44 || health<=0 || life == 0)){
 
     Reset();
+    clickS.play();
+
     
   }
 
-  if(keyDown("space") && gameState == "over"){
+  if(keyDown("space") && gameState == "over" && (temperature<44 || health>0 || life == 1)){
 
     gameState = "ap";
+    notificationS.play();
+
+    
+
   }
 
   if(keyDown("enter") && gameState == "ap"){
 
     Reset();
+    clickS.play();
+
   }
 
   if(river.y == 7700){
