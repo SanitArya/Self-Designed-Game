@@ -9,7 +9,7 @@ var temperature = 34;
 
 var stoneGrp,pollutantGrp;
 
-var leftBoundry1,rightBoundry1,leftBoundry2,rightBoundry2,leftBoundry3,rightBoundry3;
+var leftBoundry1,rightBoundry1,leftBoundry2,rightBoundry2,leftBoundry3,rightBoundry3,bottomBoundry1,bottomBoundry2,bottomBoundry3;
 
 var edges;
 
@@ -24,6 +24,8 @@ var winI,loseI,GWI,WPI,API;
 var life = 1;
 
 var GOS,clickS,notificationS;
+
+var i = 1;
 
 
 
@@ -102,6 +104,7 @@ function setup() {
   river = createSprite(400,800);
   river.addImage("riverI",riverI);
   river.scale = 2;
+  river.tint = "green";
   river.visible = false;
 
   //Creating road
@@ -134,47 +137,60 @@ function setup() {
   pollutantGrp = new Group();
   smokeGrp = new Group();
 
+ //Creating Left Boundry
  leftBoundry1 = createSprite(110,3700,10,1500);
  leftBoundry1.visible = false;
-
- rightBoundry1 = createSprite(690,3700,10,1500);
- rightBoundry1.visible = false;
 
  leftBoundry2 = createSprite(120,3700,10,1500);
  leftBoundry2.visible = false;
 
- rightBoundry2 = createSprite(680,3700,10,1500);
- rightBoundry2.visible = false;
-
-
+ 
  leftBoundry3 = createSprite(160,3700,10,1500);
  leftBoundry3.visible = false;
+
+
+ //Creating Right Boundry
+ rightBoundry1 = createSprite(690,3700,10,1500);
+ rightBoundry1.visible = false;
+
+ rightBoundry2 = createSprite(680,3700,10,1500);
+ rightBoundry2.visible = false;
 
  rightBoundry3 = createSprite(640,3700,10,1500);
  rightBoundry3.visible = false;
 
+ //Creating Bottom Boundry
+ bottomBoundry1 = createSprite(400,4100,800,10);
+ bottomBoundry1.visible = false;
+
+ //Creating Sprite for You Win message
  win = createSprite(400,3700);
  win.addImage("winI",winI);
  win.scale = 2;
  win.visible = false;
 
+ //Creating Sprite for You Lose message
  lose = createSprite(400,3650);
  lose.addImage("loseI",loseI)
  lose.visible = false;
 
+//Creating Sprite for Global Warming message
  GW = createSprite(400,3700);
  GW.addImage("GWI",GWI);
  GW.scale = 0.80;
  GW.visible = false;
 
+ //Creating Sprite for Water Pollution message
  WP = createSprite(400,3700);
  WP.addImage("WPI",WPI);
  WP.scale = 1.2;
  WP.visible = false;
 
+ //Creating Sprite for Air Pollution message
  AP = createSprite(400,3700);
  AP.addImage("API",API);
  AP.visible = false;
+
 }
 
 
@@ -195,6 +211,7 @@ function draw() {
 
   //Coloring Background
   background("black");
+
 
   //Displaying Sprites
   drawSprites();
@@ -246,10 +263,17 @@ function draw() {
   }
 
 
-  if(player3.y<-2390 && gameState == "lvl3" || temperature>44 || health<=0 || life == 0){
+  if(player3.y<-2390 && gameState == "lvl3" || (temperature>44 || health<=0 || life == 0)){
 
     gameState = "over";
-    //GOS.play();
+
+    if(i==1){
+
+    GOS.play();
+    i = 0;
+
+    }
+
     
   }
 
@@ -258,10 +282,9 @@ function draw() {
     Reset();
     clickS.play();
 
-    
   }
 
-  if(keyDown("space") && gameState == "over" && (temperature<44 || health>0 || life == 1)){
+  if(keyDown("space") && gameState == "over" && (temperature<44 && health>0 && life == 1)){
 
     gameState = "ap";
     notificationS.play();
@@ -277,6 +300,7 @@ function draw() {
 
   }
 
+  //Stopping the flow of river
   if(river.y == 7700){
 
     river.velocityY = 0;
@@ -311,12 +335,14 @@ function draw() {
 
     Over();
   }
-
+  
   //Calling camera position function 
   Position();
 
+  //Calling Did You Know message
   DYK();
 
+  //Console
   console.log(gameState)
 }
 
@@ -364,6 +390,7 @@ function Level1(){
 
  player1.collide(leftBoundry1);
  player1.collide(rightBoundry1);
+ player1.collide(bottomBoundry1);
 
  if(frameCount%10 == 0){
 
@@ -407,6 +434,8 @@ function Level2(){
 
  player2.collide(leftBoundry2);
  player2.collide(rightBoundry2);
+ player2.collide(bottomBoundry1);
+
 
  textSize(30);
  fill("white")
@@ -453,6 +482,8 @@ function Level3(){
 
   player3.collide(leftBoundry3);
   player3.collide(rightBoundry3);
+  player3.collide(bottomBoundry1);
+
 
   var t = 3355;
 
@@ -629,6 +660,7 @@ function Movement(level){
     UP(plr);
     leftBoundry1.y = player1.y;
     rightBoundry1.y = player1.y;
+
   }
 
   if(keyDown(DOWN_ARROW) && gameState == level){
@@ -636,6 +668,7 @@ function Movement(level){
     DOWN(plr);
     leftBoundry1.y = player1.y;
     rightBoundry1.y = player1.y;
+    
   }
 
   if(keyDown(LEFT_ARROW) && gameState == level){
@@ -643,6 +676,7 @@ function Movement(level){
     Left(plr);
     leftBoundry2.y = player2.y;
     rightBoundry2.y = player2.y;
+    
   }
 
   if(keyDown(RIGHT_ARROW) && gameState == level){
@@ -650,9 +684,9 @@ function Movement(level){
     Right(plr);
     leftBoundry3.y = player3.y;
     rightBoundry3.y = player3.y;
+  
   }
 }
-
 
 
 
@@ -786,7 +820,7 @@ function spawnStone(){
 
 function spawnPollutant(){
 
-  if(frameCount%20 == 0 && (river.velocityY == 15)){
+  if(frameCount%10 == 0 && (river.velocityY == 15)){
 
     var pollutant = createSprite(random(180,600),player2.y - 900);
 
@@ -892,6 +926,10 @@ function Reset(){
 
   state = 1;
 
+  life = 1;
+
+  i = 1;
+
   player1.x = 400;
   player1.y = 4050;
 
@@ -914,6 +952,25 @@ function Reset(){
 
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Function for displaying Lose Messages in different Levels
 function State(){
 
     if(state == 1){
@@ -981,6 +1038,7 @@ function State(){
 
 
 
+//Function for displaying different types of facts after completing each level
 function DYK(){
 
     if(gameState == "gw"){
