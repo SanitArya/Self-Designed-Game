@@ -655,9 +655,10 @@ function Position(){
 //Creating Player's movement
 function Movement(level){
 
-  if(keyDown(UP_ARROW) && gameState == level){
+  if((keyDown(UP_ARROW) || touches.length>0) && gameState == level){
 
     UP(plr);
+
     leftBoundry1.y = player1.y;
     rightBoundry1.y = player1.y;
 
@@ -705,21 +706,25 @@ function Movement(level){
 function UP(player){
 
   player.y = player.y - 15;
+  touches = [];
 }
 
 function DOWN(player){
 
   player.y = player.y + 15;
+  touches = [];
 }
 
 function Left(player){
 
   player.x = player.x - 15;
+  touches = [];
 }
 
 function Right(player){
 
   player.x = player.x + 15;
+  touches = [];
 }
 
 
