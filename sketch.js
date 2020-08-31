@@ -217,11 +217,12 @@ function draw() {
   drawSprites();
 
   //Changing Game State
-  if(keyDown("space") && gameState== "start" ){
+  if((keyDown("space") || touches.length>0) && gameState== "start" ){
 
     gameState = "lvl1";
     state = 1;
     clickS.play();
+    touches = [];
   }
 
   if(player1.y<-2390 && gameState == "lvl1"){
